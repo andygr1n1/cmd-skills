@@ -321,3 +321,16 @@ If you prefer a fixed folder, replace the output line with your own path:
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
+
+
+
+## Mac
+
+```
+yt-dlp -x --audio-format mp3 --audio-quality 0 \
+  --embed-thumbnail \
+  --add-metadata \
+  --no-playlist \
+  -o "~/Downloads/%(title)s.%(ext)s" \
+  "https://www.youtube.com/watch?v=lvbU-c-dbSA&list=PL8JfGy8IzjYNxq0rIi87FoNWu_ekIoLjR&index=12"
+```
