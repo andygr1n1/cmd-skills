@@ -308,7 +308,8 @@ instagram() {
     echo "Usage: instagram <REEL_URL>"
     return 1
   fi
-  yt-dlp -f "bestvideo+bestaudio/best" --merge-output-format mp4 \
+  yt-dlp --cookies-from-browser chrome \
+    -f "bestvideo+bestaudio/best" --merge-output-format mp4 \
     --embed-thumbnail \
     --add-metadata \
     -o "$HOME/Videos/Instagram/%(uploader)s - %(title)s.%(ext)s" \
@@ -338,4 +339,5 @@ instagram "https://www.instagram.com/reel/ABC123/"
 
 - Use quotes around the URL.
 - The output folder `~/Videos/Instagram` is created automatically if you've used it before; otherwise run `mkdir -p ~/Videos/Instagram` once.
-- For private content, add `--cookies-from-browser chrome` to the function.
+- Uses Chrome cookies by default (Instagram often requires login). Log into Instagram in Chrome first. On macOS you can switch to `safari` if needed.
+- If cookie extraction fails, quit Chrome and retry.

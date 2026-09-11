@@ -322,8 +322,6 @@ If you prefer a fixed folder, replace the output line with your own path:
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-
-
 ## Mac
 
 ```
@@ -332,5 +330,5 @@ yt-dlp -x --audio-format mp3 --audio-quality 0 \
   --add-metadata \
   --no-playlist \
   -o "~/Downloads/%(title)s.%(ext)s" \
-  "https://www.youtube.com/watch?v=lvbU-c-dbSA&list=PL8JfGy8IzjYNxq0rIi87FoNWu_ekIoLjR&index=12"
+  "https://www.youtube.com/watch?v=r8LJdoxKtcA&list=RDHj2AxxazIsg&index=13"
 ```
