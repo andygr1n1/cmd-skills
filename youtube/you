@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# Download a YouTube video or playlist as MP3 into ~/Music.
+# Usage:
+#   you --type=playlist --id=PLAYLIST_ID
+#   you --type=video --id=VIDEO_ID
+
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+Usage: you --type=playlist|video --id=ID
+
+  --type=playlist   Download the playlist into ~/Music/<playlist name>/
+  --type=video      Download one video into ~/Music/
+  --id=ID           YouTube playlist id or video id
+EOF
+  exit 1
+}
+
+type=""
+id=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --type=*)
+      type="${1#--type=}"
+      shift
+      ;;
+    --type)
+      type="${2:-}"
+      shift 2
+      ;;
+    --id=*)
+      id="${1#--id=}"
+      shift
+      ;;
+    --id)
+      id="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      usage
+      ;;
+  esac
+done
+
+if [[ -z "$type" || -z "$id" ]]; then
+  usage
+fi
+
+if [[ ! "$id" =~ ^[A-Za-z0-9_-]+$ ]]; then
+  echo "Error: id must contain only letters, numbers, _ and -" >&2
+  exit 1
+fi
+
+if ! command -v yt-dlp >/dev/null 2>&1; then
+  echo "Error: yt-dlp is not on PATH" >&2
+  exit 1
+fi
+
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  echo "Error: ffmpeg is not on PATH" >&2
+  exit 1
+fi
+
+mkdir -p "$HOME/Music"
+
+common=(
+  -x
+  --audio-format mp3
+  --audio-quality 0
+  --embed-thumbnail
+  --convert-thumbnails jpg
+  --embed-metadata
+)
+
+case "$type" in
+  playlist)
+    yt-dlp "${common[@]}" \
+      --ignore-errors \
+      --yes-playlist \
+      -o "$HOME/Music/%(playlist)s/%(playlist_index)02d - %(title)s.%(ext)s" \
+      "https://www.youtube.com/playlist?list=${id}"
+    ;;
+  video)
+    yt-dlp "${common[@]}" \
+      --no-playlist \
+      -o "$HOME/Music/%(title)s.%(ext)s" \
+      "https://www.youtube.com/watch?v=${id}"
+    ;;
+  *)
+    echo "Error: type must be playlist or video" >&2
+    usage
+    ;;
+esac

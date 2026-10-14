@@ -332,3 +332,61 @@ yt-dlp -x --audio-format mp3 --audio-quality 0 \
   -o "~/Downloads/%(title)s.%(ext)s" \
   "https://www.youtube.com/watch?v=r8LJdoxKtcA&list=RDHj2AxxazIsg&index=13"
 ```
+
+## Linux
+
+On this machine, `yt-dlp` and `ffmpeg` live in `~/.local/bin`, and `~/.zshrc` adds that directory to `PATH`. The `you` script is `youtube/you`, linked from `~/.local/bin/you`.
+
+Open a new terminal after install, then check:
+
+```bash
+yt-dlp --version
+ffmpeg -version
+you --help
+```
+
+### Install yt-dlp and ffmpeg without sudo
+
+```bash
+curl -fsSL -o "$HOME/.local/bin/yt-dlp" "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
+chmod +x "$HOME/.local/bin/yt-dlp"
+
+cd /tmp
+curl -fsSL -o ffmpeg-release-amd64-static.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
+rm -rf ffmpeg-static-extract
+mkdir -p ffmpeg-static-extract
+tar -xJf ffmpeg-release-amd64-static.tar.xz -C ffmpeg-static-extract
+install -m 755 ffmpeg-static-extract/ffmpeg-*-amd64-static/ffmpeg "$HOME/.local/bin/ffmpeg"
+install -m 755 ffmpeg-static-extract/ffmpeg-*-amd64-static/ffprobe "$HOME/.local/bin/ffprobe"
+```
+
+`~/.zshrc` must contain:
+
+```bash
+export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+```
+
+Link the script so `you` works from any directory:
+
+```bash
+chmod +x "$HOME/projects/cmd-skills/youtube/you"
+ln -sfn "$HOME/projects/cmd-skills/youtube/you" "$HOME/.local/bin/you"
+```
+
+### Download a playlist
+
+```bash
+you --type=playlist --id=PLAYLIST_ID
+```
+
+Files go to `~/Music/<playlist name>/` as `01 - Song Title.mp3`, `02 - Song Title.mp3`, and so on, with tags and cover art.
+
+### Download one video
+
+```bash
+you --type=video --id=VIDEO_ID
+```
+
+The file goes to `~/Music/Song Title.mp3`.
+
+Use the id only, not the full URL. A YouTube Mix id (`RD...`) is not a stable playlist.
